@@ -1,10 +1,18 @@
 # Stage 1: Build Flutter Web
 FROM ghcr.io/cirruslabs/flutter:stable AS builder
 
+# Install protoc compiler
+RUN apt-get update && apt-get install -y protobuf-compiler && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy the entire project context
 COPY . .
+
+# Generate Dart proto files
+RUN dart pub global activate protoc_plugin
+RUN export PATH="$PATH:$HOME/.pub-cache/bin" && \
+    protoc --dart_out=grpc:frontend/lib/proto -I proto proto/poker.proto
 
 # Move into the folder where pubspec.yaml and the Flutter project live
 WORKDIR /app/frontend
