@@ -1,12 +1,22 @@
 # Stage 1: Build Flutter Web
 FROM ghcr.io/cirruslabs/flutter:stable AS builder
+
 WORKDIR /app
+
+# Copy the entire project context
 COPY . .
+
+# Move into the folder where pubspec.yaml and the Flutter project live
+WORKDIR /app/frontend
+
+# Install dependencies and build
 RUN flutter pub get
 RUN flutter build web --release
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
-COPY --from=builder /app/build/web /usr/share/nginx/html
+# Ensure we copy from the correct build path inside the frontend folder
+COPY --from=builder /app/frontend/build/web /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
