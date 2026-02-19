@@ -1,0 +1,49 @@
+syntax = "proto3";
+package poker;
+option go_package = "./proto";
+
+service PokerService {
+  // Task: 2 cards + 5 cards => best hand
+  rpc EvaluateHand (HandRequest) returns (HandResponse);
+  
+  // Task: Compare two sets of hands
+  rpc CompareHands (CompareRequest) returns (CompareResponse);
+  
+  // Task: Monte Carlo probability
+  rpc CalculateProbability (SimRequest) returns (SimResponse);
+}
+
+message HandRequest {
+  repeated string hole_cards = 1; // e.g. ["HA", "SK"]
+  repeated string community_cards = 2; // e.g. ["D2", "C7"...]
+}
+
+message HandResponse {
+  string best_hand_name = 1; // e.g. "Full House"
+  int32 hand_rank_value = 2;
+  repeated string best_cards = 3; // The actual 5 cards forming the best hand
+}
+
+message CompareRequest {
+  HandRequest hand1 = 1;
+  HandRequest hand2 = 2;
+}
+
+message CompareResponse {
+  int32 winner = 1; // 1 for hand1, 2 for hand2, 0 for tie
+  HandResponse hand1_result = 2;
+  HandResponse hand2_result = 3;
+}
+
+message SimRequest {
+  repeated string hole_cards = 1; // e.g. ["HA", "SK"]
+  repeated string community_cards = 2; // Known community cards
+  int32 num_simulations = 3; // Number of Monte Carlo simulations
+}
+
+message SimResponse {
+  double win_probability = 1;
+  double tie_probability = 2;
+  double lose_probability = 3;
+  int32 simulations_run = 4;
+}
