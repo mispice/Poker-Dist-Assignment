@@ -131,26 +131,55 @@ poker-server (localhost:50051)
 ## 📦 File Structure
 ```
 Poker-dist-assignment/
+├── .dockerignore                     # Docker build exclusions
+├── Dockerfile.proxy                  # gRPC-Web proxy Docker image
+├── PROJECT_SUMMARY.md                # Complete project documentation
+├── QUICKSTART.md                     # Quick start guide
+├── README.md                         # Main documentation
+├── go.mod                            # Go dependencies
+├── go.sum                            # Go dependency checksums
+├── poker-server                      # Compiled backend binary
+├── run_tests                         # Compiled test runner binary
+├── run_teacher_tests.go              # Test suite source code
+├── test_cases.csv                    # 55 teacher test cases
+├── test_client.go                    # gRPC client test utility
+│
 ├── proto/
-│   ├── poker.proto           # gRPC service definition
-│   ├── poker.pb.go           # Generated Go code
-│   └── poker_grpc.pb.go      # Generated gRPC code
+│   ├── poker.proto                   # gRPC service definition (proto3)
+│   ├── poker.pb.go                   # Generated Go protobuf code
+│   └── poker_grpc.pb.go              # Generated Go gRPC code
+│
 ├── server/
-│   ├── main.go               # Server entry point
-│   ├── server.go             # gRPC service implementation
-│   └── evaluator.go          # Poker hand evaluation logic
-├── frontend/
-│   ├── lib/
-│   │   ├── main.dart         # Flutter UI
-│   │   └── proto/            # Generated Dart proto files
-│   ├── pubspec.yaml          # Flutter dependencies
-│   └── web/                  # Web assets
-├── run_teacher_tests.go      # Test suite
-├── test_cases.csv            # 55 test cases
-├── go.mod                    # Go dependencies
-├── README.md                 # Documentation
-├── QUICKSTART.md             # Quick start guide
-└── .gitignore                # Git ignore rules
+│   ├── Dockerfile                    # Backend Docker image
+│   ├── main.go                       # Server entry point (port 50051)
+│   ├── server.go                     # gRPC service implementation
+│   └── evaluator.go                  # Poker hand evaluation logic
+│
+└── frontend/
+    ├── Dockerfile                    # Frontend Docker image (Flutter + nginx)
+    ├── pubspec.yaml                  # Flutter dependencies
+    ├── pubspec.lock                  # Flutter dependency lock
+    ├── analysis_options.yaml         # Dart linter configuration
+    ├── frontend.iml                  # IntelliJ project file
+    ├── README.md                     # Frontend documentation
+    ├── .metadata                     # Flutter metadata
+    │
+    ├── lib/
+    │   ├── main.dart                 # Flutter UI application
+    │   └── proto/                    # Generated Dart proto files
+    │       ├── poker.pb.dart         # Dart protobuf classes
+    │       ├── poker.pbenum.dart     # Dart enums
+    │       ├── poker.pbgrpc.dart     # Dart gRPC client
+    │       └── poker.pbjson.dart     # JSON serialization
+    │
+    ├── web/
+    │   ├── index.html                # Web app entry point
+    │   ├── manifest.json             # PWA manifest
+    │   ├── favicon.png               # Site favicon
+    │   └── icons/                    # App icons (192, 512, maskable)
+    │
+    └── test/
+        └── widget_test.dart          # Flutter widget tests
 ```
 
 ## 🔧 Key Technical Decisions
