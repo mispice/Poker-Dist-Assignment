@@ -23,11 +23,11 @@ class PokerApp extends StatelessWidget {
           surface: const Color(0xFF161B22),
           background: const Color(0xFF0D1117),
         ),
-        cardTheme: CardTheme(
-          color: const Color(0xFF161B22),
+        cardTheme: const CardThemeData(
+          color: Color(0xFF161B22),
           elevation: 4,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
