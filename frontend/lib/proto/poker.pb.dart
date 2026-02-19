@@ -1,42 +1,37 @@
-//
+///
 //  Generated code. Do not modify.
 //  source: poker.proto
 //
 // @dart = 2.12
-
-// ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
 
 import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class HandRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'HandRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'poker'), createEmptyInstance: create)
+    ..pPS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'holeCards')
+    ..pPS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'communityCards')
+    ..hasRequiredFields = false
+  ;
+
+  HandRequest._() : super();
   factory HandRequest({
     $core.Iterable<$core.String>? holeCards,
     $core.Iterable<$core.String>? communityCards,
   }) {
-    final $result = create();
+    final _result = create();
     if (holeCards != null) {
-      $result.holeCards.addAll(holeCards);
+      _result.holeCards.addAll(holeCards);
     }
     if (communityCards != null) {
-      $result.communityCards.addAll(communityCards);
+      _result.communityCards.addAll(communityCards);
     }
-    return $result;
+    return _result;
   }
-  HandRequest._() : super();
   factory HandRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory HandRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'HandRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'poker'), createEmptyInstance: create)
-    ..pPS(1, _omitFieldNames ? '' : 'holeCards')
-    ..pPS(2, _omitFieldNames ? '' : 'communityCards')
-    ..hasRequiredFields = false
-  ;
-
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -46,10 +41,8 @@ class HandRequest extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  HandRequest copyWith(void Function(HandRequest) updates) => super.copyWith((message) => updates(message as HandRequest)) as HandRequest;
-
+  HandRequest copyWith(void Function(HandRequest) updates) => super.copyWith((message) => updates(message as HandRequest)) as HandRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static HandRequest create() => HandRequest._();
   HandRequest createEmptyInstance() => create();
@@ -66,34 +59,33 @@ class HandRequest extends $pb.GeneratedMessage {
 }
 
 class HandResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'HandResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'poker'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bestHandName')
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'handRankValue', $pb.PbFieldType.O3)
+    ..pPS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bestCards')
+    ..hasRequiredFields = false
+  ;
+
+  HandResponse._() : super();
   factory HandResponse({
     $core.String? bestHandName,
     $core.int? handRankValue,
     $core.Iterable<$core.String>? bestCards,
   }) {
-    final $result = create();
+    final _result = create();
     if (bestHandName != null) {
-      $result.bestHandName = bestHandName;
+      _result.bestHandName = bestHandName;
     }
     if (handRankValue != null) {
-      $result.handRankValue = handRankValue;
+      _result.handRankValue = handRankValue;
     }
     if (bestCards != null) {
-      $result.bestCards.addAll(bestCards);
+      _result.bestCards.addAll(bestCards);
     }
-    return $result;
+    return _result;
   }
-  HandResponse._() : super();
   factory HandResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory HandResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'HandResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'poker'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'bestHandName')
-    ..a<$core.int>(2, _omitFieldNames ? '' : 'handRankValue', $pb.PbFieldType.O3)
-    ..pPS(3, _omitFieldNames ? '' : 'bestCards')
-    ..hasRequiredFields = false
-  ;
-
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -103,10 +95,8 @@ class HandResponse extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  HandResponse copyWith(void Function(HandResponse) updates) => super.copyWith((message) => updates(message as HandResponse)) as HandResponse;
-
+  HandResponse copyWith(void Function(HandResponse) updates) => super.copyWith((message) => updates(message as HandResponse)) as HandResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static HandResponse create() => HandResponse._();
   HandResponse createEmptyInstance() => create();
@@ -138,29 +128,28 @@ class HandResponse extends $pb.GeneratedMessage {
 }
 
 class CompareRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CompareRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'poker'), createEmptyInstance: create)
+    ..aOM<HandRequest>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hand1', subBuilder: HandRequest.create)
+    ..aOM<HandRequest>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hand2', subBuilder: HandRequest.create)
+    ..hasRequiredFields = false
+  ;
+
+  CompareRequest._() : super();
   factory CompareRequest({
     HandRequest? hand1,
     HandRequest? hand2,
   }) {
-    final $result = create();
+    final _result = create();
     if (hand1 != null) {
-      $result.hand1 = hand1;
+      _result.hand1 = hand1;
     }
     if (hand2 != null) {
-      $result.hand2 = hand2;
+      _result.hand2 = hand2;
     }
-    return $result;
+    return _result;
   }
-  CompareRequest._() : super();
   factory CompareRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory CompareRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CompareRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'poker'), createEmptyInstance: create)
-    ..aOM<HandRequest>(1, _omitFieldNames ? '' : 'hand1', subBuilder: HandRequest.create)
-    ..aOM<HandRequest>(2, _omitFieldNames ? '' : 'hand2', subBuilder: HandRequest.create)
-    ..hasRequiredFields = false
-  ;
-
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -170,10 +159,8 @@ class CompareRequest extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  CompareRequest copyWith(void Function(CompareRequest) updates) => super.copyWith((message) => updates(message as CompareRequest)) as CompareRequest;
-
+  CompareRequest copyWith(void Function(CompareRequest) updates) => super.copyWith((message) => updates(message as CompareRequest)) as CompareRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static CompareRequest create() => CompareRequest._();
   CompareRequest createEmptyInstance() => create();
@@ -206,34 +193,33 @@ class CompareRequest extends $pb.GeneratedMessage {
 }
 
 class CompareResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CompareResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'poker'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'winner', $pb.PbFieldType.O3)
+    ..aOM<HandResponse>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hand1Result', subBuilder: HandResponse.create)
+    ..aOM<HandResponse>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hand2Result', subBuilder: HandResponse.create)
+    ..hasRequiredFields = false
+  ;
+
+  CompareResponse._() : super();
   factory CompareResponse({
     $core.int? winner,
     HandResponse? hand1Result,
     HandResponse? hand2Result,
   }) {
-    final $result = create();
+    final _result = create();
     if (winner != null) {
-      $result.winner = winner;
+      _result.winner = winner;
     }
     if (hand1Result != null) {
-      $result.hand1Result = hand1Result;
+      _result.hand1Result = hand1Result;
     }
     if (hand2Result != null) {
-      $result.hand2Result = hand2Result;
+      _result.hand2Result = hand2Result;
     }
-    return $result;
+    return _result;
   }
-  CompareResponse._() : super();
   factory CompareResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory CompareResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CompareResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'poker'), createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'winner', $pb.PbFieldType.O3)
-    ..aOM<HandResponse>(2, _omitFieldNames ? '' : 'hand1Result', subBuilder: HandResponse.create)
-    ..aOM<HandResponse>(3, _omitFieldNames ? '' : 'hand2Result', subBuilder: HandResponse.create)
-    ..hasRequiredFields = false
-  ;
-
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -243,10 +229,8 @@ class CompareResponse extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  CompareResponse copyWith(void Function(CompareResponse) updates) => super.copyWith((message) => updates(message as CompareResponse)) as CompareResponse;
-
+  CompareResponse copyWith(void Function(CompareResponse) updates) => super.copyWith((message) => updates(message as CompareResponse)) as CompareResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static CompareResponse create() => CompareResponse._();
   CompareResponse createEmptyInstance() => create();
@@ -288,34 +272,33 @@ class CompareResponse extends $pb.GeneratedMessage {
 }
 
 class SimRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SimRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'poker'), createEmptyInstance: create)
+    ..pPS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'holeCards')
+    ..pPS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'communityCards')
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'numSimulations', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  SimRequest._() : super();
   factory SimRequest({
     $core.Iterable<$core.String>? holeCards,
     $core.Iterable<$core.String>? communityCards,
     $core.int? numSimulations,
   }) {
-    final $result = create();
+    final _result = create();
     if (holeCards != null) {
-      $result.holeCards.addAll(holeCards);
+      _result.holeCards.addAll(holeCards);
     }
     if (communityCards != null) {
-      $result.communityCards.addAll(communityCards);
+      _result.communityCards.addAll(communityCards);
     }
     if (numSimulations != null) {
-      $result.numSimulations = numSimulations;
+      _result.numSimulations = numSimulations;
     }
-    return $result;
+    return _result;
   }
-  SimRequest._() : super();
   factory SimRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory SimRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SimRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'poker'), createEmptyInstance: create)
-    ..pPS(1, _omitFieldNames ? '' : 'holeCards')
-    ..pPS(2, _omitFieldNames ? '' : 'communityCards')
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'numSimulations', $pb.PbFieldType.O3)
-    ..hasRequiredFields = false
-  ;
-
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -325,10 +308,8 @@ class SimRequest extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  SimRequest copyWith(void Function(SimRequest) updates) => super.copyWith((message) => updates(message as SimRequest)) as SimRequest;
-
+  SimRequest copyWith(void Function(SimRequest) updates) => super.copyWith((message) => updates(message as SimRequest)) as SimRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static SimRequest create() => SimRequest._();
   SimRequest createEmptyInstance() => create();
@@ -354,39 +335,38 @@ class SimRequest extends $pb.GeneratedMessage {
 }
 
 class SimResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SimResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'poker'), createEmptyInstance: create)
+    ..a<$core.double>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'winProbability', $pb.PbFieldType.OD)
+    ..a<$core.double>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'tieProbability', $pb.PbFieldType.OD)
+    ..a<$core.double>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'loseProbability', $pb.PbFieldType.OD)
+    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'simulationsRun', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  SimResponse._() : super();
   factory SimResponse({
     $core.double? winProbability,
     $core.double? tieProbability,
     $core.double? loseProbability,
     $core.int? simulationsRun,
   }) {
-    final $result = create();
+    final _result = create();
     if (winProbability != null) {
-      $result.winProbability = winProbability;
+      _result.winProbability = winProbability;
     }
     if (tieProbability != null) {
-      $result.tieProbability = tieProbability;
+      _result.tieProbability = tieProbability;
     }
     if (loseProbability != null) {
-      $result.loseProbability = loseProbability;
+      _result.loseProbability = loseProbability;
     }
     if (simulationsRun != null) {
-      $result.simulationsRun = simulationsRun;
+      _result.simulationsRun = simulationsRun;
     }
-    return $result;
+    return _result;
   }
-  SimResponse._() : super();
   factory SimResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory SimResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SimResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'poker'), createEmptyInstance: create)
-    ..a<$core.double>(1, _omitFieldNames ? '' : 'winProbability', $pb.PbFieldType.OD)
-    ..a<$core.double>(2, _omitFieldNames ? '' : 'tieProbability', $pb.PbFieldType.OD)
-    ..a<$core.double>(3, _omitFieldNames ? '' : 'loseProbability', $pb.PbFieldType.OD)
-    ..a<$core.int>(4, _omitFieldNames ? '' : 'simulationsRun', $pb.PbFieldType.O3)
-    ..hasRequiredFields = false
-  ;
-
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -396,10 +376,8 @@ class SimResponse extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  SimResponse copyWith(void Function(SimResponse) updates) => super.copyWith((message) => updates(message as SimResponse)) as SimResponse;
-
+  SimResponse copyWith(void Function(SimResponse) updates) => super.copyWith((message) => updates(message as SimResponse)) as SimResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static SimResponse create() => SimResponse._();
   SimResponse createEmptyInstance() => create();
@@ -445,6 +423,3 @@ class SimResponse extends $pb.GeneratedMessage {
   void clearSimulationsRun() => clearField(4);
 }
 
-
-const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');

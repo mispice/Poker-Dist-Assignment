@@ -9,8 +9,8 @@ WORKDIR /app
 # Copy the entire project context
 COPY . .
 
-# Generate Dart proto files
-RUN dart pub global activate protoc_plugin
+# Generate Dart proto files (use compatible version with protobuf ^2.1.0)
+RUN dart pub global activate protoc_plugin 20.0.1
 RUN export PATH="$PATH:$HOME/.pub-cache/bin" && \
     protoc --dart_out=grpc:frontend/lib/proto -I proto proto/poker.proto
 
