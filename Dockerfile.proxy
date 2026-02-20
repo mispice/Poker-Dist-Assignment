@@ -3,6 +3,12 @@ RUN go install github.com/improbable-eng/grpc-web/go/grpcwebproxy@latest
 
 FROM alpine:latest
 COPY --from=builder /go/bin/grpcwebproxy /usr/local/bin/
-# These flags connect the proxy to your backend service in Kubernetes
-ENTRYPOINT ["grpcwebproxy"]
-CMD ["--backend_addr=poker-backend-svc:50051", "--run_tls_server=false", "--allow_all_origins"]
+
+EXPOSE 8081
+
+# Run the proxy with full CORS and header support for Flutter/mobile compatibility
+CMD ["grpcwebproxy", \
+     "--backend_addr=poker-backend-svc:50051", \
+     "--run_tls_server=false", \
+     "--allow_all_origins", \
+     "--server_http_debug_port=8081"]
