@@ -1,0 +1,453 @@
+================================================================================
+POKER SERVER - CSV TEST SUITE (test_cases.csv)
+================================================================================
+
+
+📋 Testing: HIGH CARD
+--------------------------------------------------------------------------------
+✅ Test 1: SK > SQ
+   Player 1: [SK CA] → High Card (Rank: 1490832)
+   Player 2: [HA SQ] → High Card (Rank: 1484166)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: HIGH CARD
+--------------------------------------------------------------------------------
+✅ Test 2: hands are only permutations of previous line
+   Player 1: [D6 CA] → High Card (Rank: 1490832)
+   Player 2: [HA D6] → High Card (Rank: 1484166)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: HIGH CARD
+--------------------------------------------------------------------------------
+✅ Test 3: 
+   Player 1: [SK CA] → High Card (Rank: 1490832)
+   Player 2: [HA CK] → High Card (Rank: 1490832)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: HIGH CARD
+--------------------------------------------------------------------------------
+✅ Test 4: hands are only permutations of previous line
+   Player 1: [S9 SK] → High Card (Rank: 1490832)
+   Player 2: [H4 HA] → High Card (Rank: 1490832)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: HIGH CARD
+--------------------------------------------------------------------------------
+✅ Test 5: DQ > DJ
+   Player 1: [C7 DQ] → High Card (Rank: 1263280)
+   Player 2: [C8 DJ] → High Card (Rank: 1163724)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: HIGH CARD
+--------------------------------------------------------------------------------
+✅ Test 6: hands are only permutations of previous line
+   Player 1: [H4 S9] → High Card (Rank: 1263280)
+   Player 2: [C8 D6] → High Card (Rank: 1163724)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: ONE PAIR
+--------------------------------------------------------------------------------
+✅ Test 8: K > 8
+   Player 1: [DK C5] → One Pair (Rank: 11400807)
+   Player 2: [H8 D5] → One Pair (Rank: 10931007)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: ONE PAIR
+--------------------------------------------------------------------------------
+✅ Test 9: hands are only permutations of previous line
+   Player 1: [DK HT] → One Pair (Rank: 11400807)
+   Player 2: [HT H8] → One Pair (Rank: 10931007)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: ONE PAIR
+--------------------------------------------------------------------------------
+✅ Test 10: K = K, ...
+   Player 1: [DK C4] → One Pair (Rank: 11400807)
+   Player 2: [HK D5] → One Pair (Rank: 11400807)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: ONE PAIR
+--------------------------------------------------------------------------------
+✅ Test 11: 
+   Player 1: [C8 DK] → One Pair (Rank: 11400807)
+   Player 2: [HK C8] → One Pair (Rank: 11400807)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: ONE PAIR
+--------------------------------------------------------------------------------
+✅ Test 12: 7 > 6
+   Player 1: [D5 C6] → One Pair (Rank: 11500906)
+   Player 2: [H7 C2] → One Pair (Rank: 11500907)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: ONE PAIR
+--------------------------------------------------------------------------------
+✅ Test 13: hands are only permutations of previous line
+   Player 1: [C6 C9] → One Pair (Rank: 11500906)
+   Player 2: [HA DA] → One Pair (Rank: 11500907)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: TWO PAIRS
+--------------------------------------------------------------------------------
+✅ Test 15: A > Q
+   Player 1: [HA C3] → Two Pair (Rank: 21406013)
+   Player 2: [CQ H4] → Two Pair (Rank: 21206014)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: TWO PAIRS
+--------------------------------------------------------------------------------
+✅ Test 16: hands are only permutations of previous line
+   Player 1: [CK D6] → Two Pair (Rank: 21406013)
+   Player 2: [CQ DQ] → Two Pair (Rank: 21206014)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: TWO PAIRS
+--------------------------------------------------------------------------------
+✅ Test 17: 
+   Player 1: [HQ C3] → Two Pair (Rank: 21206014)
+   Player 2: [SQ H4] → Two Pair (Rank: 21206014)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: TWO PAIRS
+--------------------------------------------------------------------------------
+✅ Test 18: hands are only permutations of previous line
+   Player 1: [SA HQ] → Two Pair (Rank: 21206014)
+   Player 2: [SQ DQ] → Two Pair (Rank: 21206014)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: TWO PAIRS
+--------------------------------------------------------------------------------
+✅ Test 19: A > Q
+   Player 1: [HQ C6] → Two Pair (Rank: 21206014)
+   Player 2: [CA HK] → Two Pair (Rank: 21413012)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: TWO PAIRS
+--------------------------------------------------------------------------------
+✅ Test 20: hands are only permutations of previous line
+   Player 1: [C6 D6] → Two Pair (Rank: 21206014)
+   Player 2: [DQ HK] → Two Pair (Rank: 21413012)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: THREE OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 22: J > 3
+   Player 1: [HJ SJ] → Three of a Kind (Rank: 31240800)
+   Player 2: [C3 H3] → Three of a Kind (Rank: 30441100)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: THREE OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 23: hands are only permutations of previous line
+   Player 1: [SA C8] → Three of a Kind (Rank: 31240800)
+   Player 2: [D3 SA] → Three of a Kind (Rank: 30441100)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: THREE OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 24: 3 = 3, ...
+   Player 1: [C3 S2] → Three of a Kind (Rank: 30441100)
+   Player 2: [S3 H2] → Three of a Kind (Rank: 30441100)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: THREE OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 25: hands are only permutations of previous line
+   Player 1: [D3 SA] → Three of a Kind (Rank: 30441100)
+   Player 2: [SA D3] → Three of a Kind (Rank: 30441100)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: THREE OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 26: K > T
+   Player 1: [S2 S5] → Three of a Kind (Rank: 31500500)
+   Player 2: [H2 SK] → Three of a Kind (Rank: 31531000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: THREE OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 27: hands are only permutations of previous line
+   Player 1: [HA SA] → Three of a Kind (Rank: 31500500)
+   Player 2: [SK HA] → Three of a Kind (Rank: 31531000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: STRAIGHT
+--------------------------------------------------------------------------------
+✅ Test 29: 7 > 6
+   Player 1: [D7 HA] → Straight (Rank: 40700000)
+   Player 2: [H2 SA] → Straight (Rank: 40600000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: STRAIGHT
+--------------------------------------------------------------------------------
+✅ Test 30: hands are only permutations of previous line
+   Player 1: [S6 D7] → Straight (Rank: 40700000)
+   Player 2: [H3 H2] → Straight (Rank: 40600000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: STRAIGHT
+--------------------------------------------------------------------------------
+✅ Test 31: 7 = 7
+   Player 1: [D7 HA] → Straight (Rank: 40700000)
+   Player 2: [H7 SA] → Straight (Rank: 40700000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: STRAIGHT
+--------------------------------------------------------------------------------
+✅ Test 32: hands are only permutations of previous line
+   Player 1: [C5 S6] → Straight (Rank: 40700000)
+   Player 2: [H3 S6] → Straight (Rank: 40700000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: STRAIGHT
+--------------------------------------------------------------------------------
+✅ Test 33: 6 > 5
+   Player 1: [HA S3] → Straight (Rank: 40500000)
+   Player 2: [H6 SA] → Straight (Rank: 40600000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: STRAIGHT
+--------------------------------------------------------------------------------
+✅ Test 34: hands are only permutations of previous line
+   Player 1: [H2 H3] → Straight (Rank: 40500000)
+   Player 2: [H3 S4] → Straight (Rank: 40600000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: FLUSH
+--------------------------------------------------------------------------------
+✅ Test 36: A > Q
+   Player 1: [DK DA] → Flush (Rank: 68856110)
+   Player 2: [D2 DQ] → Flush (Rank: 65434166)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: FLUSH
+--------------------------------------------------------------------------------
+✅ Test 37: hands are only permutations of previous line
+   Player 1: [D3 D6] → Flush (Rank: 68856110)
+   Player 2: [D3 DQ] → Flush (Rank: 65434166)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: FLUSH
+--------------------------------------------------------------------------------
+✅ Test 38: the specific player cards are in this case irrelevant for the comparison
+   Player 1: [C3 HA] → Flush (Rank: 67356110)
+   Player 2: [S9 HJ] → Flush (Rank: 67356110)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: FLUSH
+--------------------------------------------------------------------------------
+✅ Test 39: hands are only permutations of previous line
+   Player 1: [D6 DT] → Flush (Rank: 67356110)
+   Player 2: [D3 DK] → Flush (Rank: 67356110)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: FLUSH
+--------------------------------------------------------------------------------
+✅ Test 40: A > 5
+   Player 1: [D2 D5] → Flush (Rank: 62323055)
+   Player 2: [DJ DA] → Flush (Rank: 68356110)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: FLUSH
+--------------------------------------------------------------------------------
+✅ Test 41: hands are only permutations of previous line
+   Player 1: [D2 D5] → Flush (Rank: 62323055)
+   Player 2: [D3 DJ] → Flush (Rank: 68356110)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: FULL HOUSE
+--------------------------------------------------------------------------------
+✅ Test 43: 3 times Q > 3 times T
+   Player 1: [DQ C2] → Full House (Rank: 61210000)
+   Player 2: [CT C4] → Full House (Rank: 61012000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: FULL HOUSE
+--------------------------------------------------------------------------------
+✅ Test 44: hands are only permutations of previous line
+   Player 1: [HQ HT] → Full House (Rank: 61210000)
+   Player 2: [SQ HT] → Full House (Rank: 61012000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: FULL HOUSE
+--------------------------------------------------------------------------------
+✅ Test 45: 
+   Player 1: [HA DQ] → Full House (Rank: 61214000)
+   Player 2: [DA CQ] → Full House (Rank: 61214000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: FULL HOUSE
+--------------------------------------------------------------------------------
+✅ Test 46: hands are only permutations of previous line
+   Player 1: [DQ HQ] → Full House (Rank: 61214000)
+   Player 2: [DA HQ] → Full House (Rank: 61214000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: FULL HOUSE
+--------------------------------------------------------------------------------
+✅ Test 47: 3 times Q > 3 times T
+   Player 1: [ST C2] → Full House (Rank: 61012000)
+   Player 2: [CQ C4] → Full House (Rank: 61210000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: FULL HOUSE
+--------------------------------------------------------------------------------
+✅ Test 48: hands are only permutations of previous line
+   Player 1: [HT DT] → Full House (Rank: 61012000)
+   Player 2: [HQ HT] → Full House (Rank: 61210000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: FOUR OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 50: A > K
+   Player 1: [HA S7] → Four of a Kind (Rank: 71014000)
+   Player 2: [DJ C5] → Four of a Kind (Rank: 71013000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: FOUR OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 51: hands are only permutations of previous line
+   Player 1: [HT HA] → Four of a Kind (Rank: 71014000)
+   Player 2: [ST CT] → Four of a Kind (Rank: 71013000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: FOUR OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 52: the specific player cards are in this case irrelevant for the comparison
+   Player 1: [CT HT] → Four of a Kind (Rank: 70514000)
+   Player 2: [C4 SQ] → Four of a Kind (Rank: 70514000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: FOUR OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 53: hands are only permutations of previous line
+   Player 1: [HA S5] → Four of a Kind (Rank: 70514000)
+   Player 2: [S5 D5] → Four of a Kind (Rank: 70514000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: FOUR OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 54: K > 8
+   Player 1: [C2 C3] → Four of a Kind (Rank: 71008000)
+   Player 2: [C5 HK] → Four of a Kind (Rank: 71013000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: FOUR OF A KIND
+--------------------------------------------------------------------------------
+✅ Test 55: hands are only permutations of previous line
+   Player 1: [CT DT] → Four of a Kind (Rank: 71008000)
+   Player 2: [CT DT] → Four of a Kind (Rank: 71013000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: STRAIGHT FLUSH
+--------------------------------------------------------------------------------
+✅ Test 57: 7 > 6
+   Player 1: [H7 HA] → Straight Flush (Rank: 80700000)
+   Player 2: [H2 SA] → Straight Flush (Rank: 80600000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: STRAIGHT FLUSH
+--------------------------------------------------------------------------------
+✅ Test 58: hands are only permutations of previous line
+   Player 1: [H3 H4] → Straight Flush (Rank: 80700000)
+   Player 2: [H4 H5] → Straight Flush (Rank: 80600000)
+   Result: hand 1 > hand 2 ✓
+
+
+📋 Testing: STRAIGHT FLUSH
+--------------------------------------------------------------------------------
+✅ Test 59: the specific player cards are in this case irrelevant for the comparison
+   Player 1: [HA ST] → Straight Flush (Rank: 80700000)
+   Player 2: [CQ D6] → Straight Flush (Rank: 80700000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: STRAIGHT FLUSH
+--------------------------------------------------------------------------------
+✅ Test 60: hands are only permutations of previous line
+   Player 1: [H7 H6] → Straight Flush (Rank: 80700000)
+   Player 2: [H3 H7] → Straight Flush (Rank: 80700000)
+   Result: hand 1 = hand 2 ✓
+
+
+📋 Testing: STRAIGHT FLUSH
+--------------------------------------------------------------------------------
+✅ Test 61: J > T
+   Player 1: [S6 C2] → Straight Flush (Rank: 81000000)
+   Player 2: [SJ D5] → Straight Flush (Rank: 81100000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: STRAIGHT FLUSH
+--------------------------------------------------------------------------------
+✅ Test 62: hands are only permutations of previous line
+   Player 1: [S6 ST] → Straight Flush (Rank: 81000000)
+   Player 2: [S7 S8] → Straight Flush (Rank: 81100000)
+   Result: hand 2 > hand 1 ✓
+
+
+📋 Testing: ROYAL FLUSH
+--------------------------------------------------------------------------------
+✅ Test 64: two players can only have a Royal Flush if the Royal Flush is in the community cards
+   Player 1: [DT DJ] → Straight Flush (Rank: 81400000)
+   Player 2: [DT DJ] → Straight Flush (Rank: 81400000)
+   Result: hand 1 = hand 2 ✓
+
+================================================================================
+TEST SUMMARY
+================================================================================
+Total Tests:  55
+✅ Passed:    55
+❌ Failed:    0
+⊘  Skipped:   0 (empty rows)
+================================================================================
+🎉 ALL CSV TESTS PASSED!

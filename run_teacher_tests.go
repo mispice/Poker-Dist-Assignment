@@ -9,197 +9,192 @@ import (
 	"strings"
 	"time"
 
-	pb "github.com/mispice/Poker-dist-assignment/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	pb "github.com/mispice/Poker-dist-assignment/proto"
 )
 
-type TestCase struct {
-	HandType       string
-	CommunityCards []string
-	Player1Cards   []string
-	Player1Hand    []string
-	Player2Cards   []string
-	Player2Hand    []string
-	ExpectedResult string
-	Comment        string
-}
-
 func parseCards(cardStr string) []string {
-	if cardStr == "" || cardStr == "–" || cardStr == "-" || cardStr == "—" {
+	if cardStr == "" || cardStr == "–" {
 		return []string{}
 	}
-	// Split by spaces and filter empty strings
-	parts := strings.Fields(cardStr)
-	cards := make([]string, 0, len(parts))
-	for _, card := range parts {
-		card = strings.TrimSpace(card)
-		if card != "" && card != "–" && card != "-" && card != "—" {
-			cards = append(cards, card)
-		}
-	}
+	cards := strings.Fields(cardStr)
 	return cards
-}
-
-func parseResult(result string) (int, error) {
-	result = strings.TrimSpace(result)
-	switch result {
-	case "hand 1 > hand 2":
-		return 1, nil
-	case "hand 2 > hand 1":
-		return 2, nil
-	case "hand 1 = hand 2":
-		return 0, nil
-	default:
-		return -1, fmt.Errorf("unknown result format: %s", result)
-	}
-}
-
-func loadTestCases(filename string) ([]TestCase, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var testCases []TestCase
-	
-	// Skip header row (index 0)
-	for i := 1; i < len(records); i++ {
-		row := records[i]
-		
-		// Skip empty rows or rows without hand type
-		if len(row) < 7 || strings.TrimSpace(row[0]) == "" {
-			continue
-		}
-
-		tc := TestCase{
-			HandType:       strings.TrimSpace(row[0]),
-			CommunityCards: parseCards(row[1]),
-			Player1Cards:   parseCards(row[2]),
-			Player1Hand:    parseCards(row[3]),
-			Player2Cards:   parseCards(row[4]),
-			Player2Hand:    parseCards(row[5]),
-			ExpectedResult: strings.TrimSpace(row[6]),
-		}
-		
-		if len(row) > 8 {
-			tc.Comment = strings.TrimSpace(row[8])
-		}
-
-		testCases = append(testCases, tc)
-	}
-
-	return testCases, nil
-}
-
-func runTest(client pb.PokerServiceClient, tc TestCase, testNum int) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// Skip if both players have no hole cards (permutation-only rows)
-	if len(tc.Player1Cards) == 0 && len(tc.Player2Cards) == 0 {
-		return true // Count as passed, it's just a permutation check
-	}
-
-	// Parse expected result
-	expectedWinner, err := parseResult(tc.ExpectedResult)
-	if err != nil {
-		fmt.Printf("❌ Test %d [%s]: Invalid expected result: %v\n", testNum, tc.HandType, err)
-		return false
-	}
-
-	// Call CompareHands
-	resp, err := client.CompareHands(ctx, &pb.CompareRequest{
-		Hand1: &pb.HandRequest{
-			HoleCards:      tc.Player1Cards,
-			CommunityCards: tc.CommunityCards,
-		},
-		Hand2: &pb.HandRequest{
-			HoleCards:      tc.Player2Cards,
-			CommunityCards: tc.CommunityCards,
-		},
-	})
-
-	if err != nil {
-		fmt.Printf("❌ Test %d [%s]: gRPC error: %v\n", testNum, tc.HandType, err)
-		fmt.Printf("   P1: %v + %v\n", tc.Player1Cards, tc.CommunityCards)
-		fmt.Printf("   P2: %v + %v\n", tc.Player2Cards, tc.CommunityCards)
-		return false
-	}
-
-	// Check if result matches
-	if resp.Winner != int32(expectedWinner) {
-		fmt.Printf("❌ Test %d [%s]: FAILED\n", testNum, tc.HandType)
-		fmt.Printf("   Expected: %s (winner=%d)\n", tc.ExpectedResult, expectedWinner)
-		fmt.Printf("   Got: winner=%d\n", resp.Winner)
-		fmt.Printf("   P1 cards: %v + %v → %s (rank=%d)\n", 
-			tc.Player1Cards, tc.CommunityCards, resp.Hand1Result.BestHandName, resp.Hand1Result.HandRankValue)
-		fmt.Printf("   P2 cards: %v + %v → %s (rank=%d)\n", 
-			tc.Player2Cards, tc.CommunityCards, resp.Hand2Result.BestHandName, resp.Hand2Result.HandRankValue)
-		if tc.Comment != "" {
-			fmt.Printf("   Comment: %s\n", tc.Comment)
-		}
-		return false
-	}
-
-	// Success
-	fmt.Printf("✅ Test %d [%s]: PASSED", testNum, tc.HandType)
-	if tc.Comment != "" && tc.Comment != "hands are only permutations of previous line" {
-		fmt.Printf(" (%s)", tc.Comment)
-	}
-	fmt.Println()
-	return true
 }
 
 func main() {
 	// Connect to server
 	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("Failed to connect to server: %v\n", err)
-		log.Fatalf("Make sure the poker server is running: ./poker-server\n")
+		log.Fatalf("Failed to connect: %v", err)
 	}
 	defer conn.Close()
 
 	client := pb.NewPokerServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
 
-	// Load test cases
-	testCases, err := loadTestCases("test_cases.csv")
+	// Read CSV file
+	file, err := os.Open("test_cases.csv")
 	if err != nil {
-		log.Fatalf("Failed to load test cases: %v", err)
+		log.Fatalf("Failed to open CSV: %v", err)
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		log.Fatalf("Failed to read CSV: %v", err)
 	}
 
-	fmt.Printf("🃏 Running %d test cases from teacher's test file\n\n", len(testCases))
+	fmt.Println("================================================================================")
+	fmt.Println("POKER SERVER - CSV TEST SUITE (test_cases.csv)")
+	fmt.Println("================================================================================")
+	fmt.Println()
 
-	// Run all tests
 	passed := 0
 	failed := 0
-	
-	for i, tc := range testCases {
-		if runTest(client, tc, i+1) {
+	skipped := 0
+	currentCategory := ""
+
+	for i, record := range records {
+		if i == 0 {
+			continue // Skip header
+		}
+
+		category := strings.TrimSpace(record[0])
+		if category != "" {
+			currentCategory = category
+			fmt.Printf("\n📋 Testing: %s\n", strings.ToUpper(currentCategory))
+			fmt.Println(strings.Repeat("-", 80))
+		}
+
+		// Parse all columns
+		community := parseCards(record[1])
+		p1Cards := parseCards(record[2])
+		hand1Expected := parseCards(record[3])
+		p2Cards := parseCards(record[4])
+		hand2Expected := parseCards(record[5])
+		expectedResult := strings.TrimSpace(record[6])
+		comment := strings.TrimSpace(record[8])
+
+		// Skip rows without expected result or without any hand data
+		if expectedResult == "" {
+			continue
+		}
+		if len(p1Cards) == 0 && len(hand1Expected) == 0 {
+			continue
+		}
+		if len(p2Cards) == 0 && len(hand2Expected) == 0 {
+			continue
+		}
+
+		// For permutation tests, use the expected hand directly
+		var p1Hole, p1Comm, p2Hole, p2Comm []string
+		
+		if len(p1Cards) > 0 {
+			// Normal test: player has hole cards
+			p1Hole = p1Cards
+			p1Comm = community
+		} else if len(hand1Expected) > 0 {
+			// Permutation test: use expected hand as all cards
+			if len(hand1Expected) >= 2 {
+				p1Hole = hand1Expected[:2]
+				p1Comm = hand1Expected[2:]
+			} else {
+				skipped++
+				fmt.Printf("⊘ Skipped %d: %s (hand1 too short)\n", i, comment)
+				continue
+			}
+		} else {
+			skipped++
+			fmt.Printf("⊘ Skipped %d: %s (no p1 data)\n", i, comment)
+			continue
+		}
+
+		if len(p2Cards) > 0 {
+			// Normal test: player has hole cards
+			p2Hole = p2Cards
+			p2Comm = community
+		} else if len(hand2Expected) > 0 {
+			// Permutation test: use expected hand as all cards
+			if len(hand2Expected) >= 2 {
+				p2Hole = hand2Expected[:2]
+				p2Comm = hand2Expected[2:]
+			} else {
+				skipped++
+				fmt.Printf("⊘ Skipped %d: %s (hand2 too short)\n", i, comment)
+				continue
+			}
+		} else {
+			skipped++
+			fmt.Printf("⊘ Skipped %d: %s (no p2 data)\n", i, comment)
+			continue
+		}
+
+		// Compare hands
+		compareReq := &pb.CompareRequest{
+			Hand1: &pb.HandRequest{
+				HoleCards:      p1Hole,
+				CommunityCards: p1Comm,
+			},
+			Hand2: &pb.HandRequest{
+				HoleCards:      p2Hole,
+				CommunityCards: p2Comm,
+			},
+		}
+
+		resp, err := client.CompareHands(ctx, compareReq)
+		if err != nil {
+			fmt.Printf("❌ Test %d FAILED: %v\n", i, err)
+			fmt.Printf("   Community: %v\n", p1Comm)
+			fmt.Printf("   Player 1: %v + %v\n", p1Hole, p1Comm)
+			fmt.Printf("   Player 2: %v + %v\n", p2Hole, p2Comm)
+			failed++
+			continue
+		}
+
+		// Determine actual result
+		var actualResult string
+		if resp.Winner == 1 {
+			actualResult = "hand 1 > hand 2"
+		} else if resp.Winner == 2 {
+			actualResult = "hand 2 > hand 1"
+		} else {
+			actualResult = "hand 1 = hand 2"
+		}
+
+		// Check if result matches
+		if actualResult == expectedResult {
+			fmt.Printf("✅ Test %d: %s\n", i, comment)
+			fmt.Printf("   Player 1: %v → %s (Rank: %d)\n", p1Hole, resp.Hand1Result.BestHandName, resp.Hand1Result.HandRankValue)
+			fmt.Printf("   Player 2: %v → %s (Rank: %d)\n", p2Hole, resp.Hand2Result.BestHandName, resp.Hand2Result.HandRankValue)
+			fmt.Printf("   Result: %s ✓\n", actualResult)
 			passed++
 		} else {
+			fmt.Printf("❌ Test %d FAILED: %s\n", i, comment)
+			fmt.Printf("   Player 1: %v → %s (Rank: %d)\n", p1Hole, resp.Hand1Result.BestHandName, resp.Hand1Result.HandRankValue)
+			fmt.Printf("   Player 2: %v → %s (Rank: %d)\n", p2Hole, resp.Hand2Result.BestHandName, resp.Hand2Result.HandRankValue)
+			fmt.Printf("   Expected: %s\n", expectedResult)
+			fmt.Printf("   Got:      %s ✗\n", actualResult)
 			failed++
 		}
+		fmt.Println()
 	}
 
-	// Summary
-	fmt.Println("\n" + strings.Repeat("=", 60))
-	fmt.Printf("📊 Test Results Summary:\n")
-	fmt.Printf("   Total:  %d\n", len(testCases))
-	fmt.Printf("   ✅ Passed: %d\n", passed)
-	fmt.Printf("   ❌ Failed: %d\n", failed)
-	
+	fmt.Println("================================================================================")
+	fmt.Println("TEST SUMMARY")
+	fmt.Println("================================================================================")
+	fmt.Printf("Total Tests:  %d\n", passed+failed)
+	fmt.Printf("✅ Passed:    %d\n", passed)
+	fmt.Printf("❌ Failed:    %d\n", failed)
+	fmt.Printf("⊘  Skipped:   %d (empty rows)\n", skipped)
+	fmt.Println("================================================================================")
+
 	if failed == 0 {
-		fmt.Println("\n🎉 ALL TESTS PASSED! Your poker server is working correctly!")
+		fmt.Println("🎉 ALL CSV TESTS PASSED!")
 	} else {
-		fmt.Printf("\n⚠️  %d test(s) failed. Review the output above for details.\n", failed)
+		fmt.Printf("⚠️  %d TEST(S) FAILED\n", failed)
+		os.Exit(1)
 	}
-	fmt.Println(strings.Repeat("=", 60))
 }

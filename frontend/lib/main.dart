@@ -23,11 +23,11 @@ class PokerApp extends StatelessWidget {
           surface: const Color(0xFF161B22),
           background: const Color(0xFF0D1117),
         ),
-        cardTheme: const CardThemeData(
-          color: Color(0xFF161B22),
+        cardTheme: CardTheme(
+          color: const Color(0xFF161B22),
           elevation: 4,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -76,7 +76,8 @@ class _PokerHomePageState extends State<PokerHomePage> {
   // Controllers for Evaluate Hand
   final _evalHole1Controller = TextEditingController();
   final _evalHole2Controller = TextEditingController();
-  final _evalCommunityController = TextEditingController();
+  final List<TextEditingController> _evalCommunityControllers = 
+      List.generate(5, (_) => TextEditingController());
   String _evalResult = '';
 
   // Controllers for Compare Hands
@@ -84,13 +85,15 @@ class _PokerHomePageState extends State<PokerHomePage> {
   final _p1Hole2Controller = TextEditingController();
   final _p2Hole1Controller = TextEditingController();
   final _p2Hole2Controller = TextEditingController();
-  final _compareCommunityController = TextEditingController();
+  final List<TextEditingController> _compareCommunityControllers = 
+      List.generate(5, (_) => TextEditingController());
   String _compareResult = '';
 
   // Controllers for Calculate Probability
   final _probHole1Controller = TextEditingController();
   final _probHole2Controller = TextEditingController();
-  final _probCommunityController = TextEditingController();
+  final List<TextEditingController> _probCommunityControllers = 
+      List.generate(5, (_) => TextEditingController());
   final _probSimsController = TextEditingController(text: '10000');
   String _probResult = '';
 
@@ -106,46 +109,219 @@ class _PokerHomePageState extends State<PokerHomePage> {
     _channel.shutdown();
     _evalHole1Controller.dispose();
     _evalHole2Controller.dispose();
-    _evalCommunityController.dispose();
+    for (var controller in _evalCommunityControllers) {
+      controller.dispose();
+    }
     _p1Hole1Controller.dispose();
     _p1Hole2Controller.dispose();
     _p2Hole1Controller.dispose();
     _p2Hole2Controller.dispose();
-    _compareCommunityController.dispose();
+    for (var controller in _compareCommunityControllers) {
+      controller.dispose();
+    }
     _probHole1Controller.dispose();
     _probHole2Controller.dispose();
-    _probCommunityController.dispose();
+    for (var controller in _probCommunityControllers) {
+      controller.dispose();
+    }
     _probSimsController.dispose();
     super.dispose();
   }
 
+  // Validate card format: must be 2-3 characters: Suit (H/D/C/S) + Rank (2-10/J/Q/K/A)
+  String? _validateCard(String card) {
+    if (card.isEmpty) return null; // Empty is okay for optional cards
+    
+    card = card.trim().toUpperCase();
+    
+    // Check length
+    if (card.length < 2 || card.length > 3) {
+      return 'Invalid format. Use format like HA, D10, SK';
+    }
+    
+    // Check suit (first character)
+    final suit = card[0];
+    if (!['H', 'D', 'C', 'S'].contains(suit)) {
+      return 'Invalid suit "$suit". Use H (Hearts), D (Diamonds), C (Clubs), or S (Spades)';
+    }
+    
+    // Check rank (remaining characters)
+    final rank = card.substring(1);
+    final validRanks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', 'T'];
+    if (!validRanks.contains(rank)) {
+      return 'Invalid rank "$rank". Use 2-10, J, Q, K, or A';
+    }
+    
+    return null; // Valid
+  }
+
+  // Validate all cards in a list and return error if any
+  String? _validateCards(List<String> cards, {int? minCards, int? maxCards, String fieldName = 'Cards'}) {
+    final nonEmptyCards = cards.where((c) => c.trim().isNotEmpty).toList();
+    
+    if (minCards != null && nonEmptyCards.length < minCards) {
+      return '$fieldName: Need at least $minCards card(s), got ${nonEmptyCards.length}';
+    }
+    
+    if (maxCards != null && nonEmptyCards.length > maxCards) {
+      return '$fieldName: Maximum $maxCards card(s) allowed, got ${nonEmptyCards.length}';
+    }
+    
+    for (var card in nonEmptyCards) {
+      final error = _validateCard(card);
+      if (error != null) {
+        return '$fieldName: $error';
+      }
+    }
+    
+    // Check for duplicates
+    final seen = <String>{};
+    for (var card in nonEmptyCards) {
+      final normalized = card.trim().toUpperCase();
+      if (seen.contains(normalized)) {
+        return '$fieldName: Duplicate card "$normalized"';
+      }
+      seen.add(normalized);
+    }
+    
+    return null; // All valid
+  }
+
   void _evaluateHand() async {
     try {
+      final holeCards = [
+        _evalHole1Controller.text.trim().toUpperCase(),
+        _evalHole2Controller.text.trim().toUpperCase(),
+      ];
+      
+      final communityCards = _evalCommunityControllers
+          .map((c) => c.text.trim().toUpperCase())
+          .where((c) => c.isNotEmpty)
+          .toList();
+      
+      // Validate hole cards
+      final holeError = _validateCards(holeCards, minCards: 2, maxCards: 2, fieldName: 'Hole cards');
+      if (holeError != null) {
+        setState(() {
+          _evalResult = '❌ $holeError';
+        });
+        return;
+      }
+      
+      // Validate community cards
+      final communityError = _validateCards(communityCards, minCards: 0, maxCards: 5, fieldName: 'Community cards');
+      if (communityError != null) {
+        setState(() {
+          _evalResult = '❌ $communityError';
+        });
+        return;
+      }
+      
+      // Check total cards
+      final totalCards = holeCards.length + communityCards.length;
+      if (totalCards < 5) {
+        setState(() {
+          _evalResult = '❌ Need at least 5 cards total (2 hole + 3+ community)';
+        });
+        return;
+      }
+      
+      // Check for duplicates across all cards
+      final allCards = [...holeCards, ...communityCards];
+      final duplicateError = _validateCards(allCards, fieldName: 'All cards');
+      if (duplicateError != null && duplicateError.contains('Duplicate')) {
+        setState(() {
+          _evalResult = '❌ $duplicateError';
+        });
+        return;
+      }
+      
       final request = HandRequest()
-        ..holeCards.addAll([_evalHole1Controller.text, _evalHole2Controller.text])
-        ..communityCards.addAll(_evalCommunityController.text.split(' ').where((c) => c.isNotEmpty));
+        ..holeCards.addAll(holeCards)
+        ..communityCards.addAll(communityCards);
 
       final response = await _client.evaluateHand(request);
 
       setState(() {
-        _evalResult = '${response.bestHandName} (Rank: ${response.handRankValue})';
+        _evalResult = '✅ ${response.bestHandName}\nRank: ${response.handRankValue}';
       });
     } catch (e) {
       setState(() {
-        _evalResult = 'Error: ${e.toString()}';
+        _evalResult = '❌ Error: ${e.toString()}';
       });
     }
   }
 
   void _compareHands() async {
     try {
+      final p1HoleCards = [
+        _p1Hole1Controller.text.trim().toUpperCase(),
+        _p1Hole2Controller.text.trim().toUpperCase(),
+      ];
+      
+      final p2HoleCards = [
+        _p2Hole1Controller.text.trim().toUpperCase(),
+        _p2Hole2Controller.text.trim().toUpperCase(),
+      ];
+      
+      final communityCards = _compareCommunityControllers
+          .map((c) => c.text.trim().toUpperCase())
+          .where((c) => c.isNotEmpty)
+          .toList();
+      
+      // Validate player 1 hole cards
+      final p1Error = _validateCards(p1HoleCards, minCards: 2, maxCards: 2, fieldName: 'Player 1 hole cards');
+      if (p1Error != null) {
+        setState(() {
+          _compareResult = '❌ $p1Error';
+        });
+        return;
+      }
+      
+      // Validate player 2 hole cards
+      final p2Error = _validateCards(p2HoleCards, minCards: 2, maxCards: 2, fieldName: 'Player 2 hole cards');
+      if (p2Error != null) {
+        setState(() {
+          _compareResult = '❌ $p2Error';
+        });
+        return;
+      }
+      
+      // Validate community cards
+      final communityError = _validateCards(communityCards, minCards: 0, maxCards: 5, fieldName: 'Community cards');
+      if (communityError != null) {
+        setState(() {
+          _compareResult = '❌ $communityError';
+        });
+        return;
+      }
+      
+      // Check total cards
+      final totalCards = p1HoleCards.length + communityCards.length;
+      if (totalCards < 5) {
+        setState(() {
+          _compareResult = '❌ Need at least 5 cards total (2 hole + 3+ community)';
+        });
+        return;
+      }
+      
+      // Check for duplicates across all cards
+      final allCards = [...p1HoleCards, ...p2HoleCards, ...communityCards];
+      final duplicateError = _validateCards(allCards, fieldName: 'All cards');
+      if (duplicateError != null && duplicateError.contains('Duplicate')) {
+        setState(() {
+          _compareResult = '❌ $duplicateError';
+        });
+        return;
+      }
+      
       final hand1 = HandRequest()
-        ..holeCards.addAll([_p1Hole1Controller.text, _p1Hole2Controller.text])
-        ..communityCards.addAll(_compareCommunityController.text.split(' ').where((c) => c.isNotEmpty));
+        ..holeCards.addAll(p1HoleCards)
+        ..communityCards.addAll(communityCards);
       
       final hand2 = HandRequest()
-        ..holeCards.addAll([_p2Hole1Controller.text, _p2Hole2Controller.text])
-        ..communityCards.addAll(_compareCommunityController.text.split(' ').where((c) => c.isNotEmpty));
+        ..holeCards.addAll(p2HoleCards)
+        ..communityCards.addAll(communityCards);
       
       final request = CompareRequest()
         ..hand1 = hand1
@@ -155,37 +331,86 @@ class _PokerHomePageState extends State<PokerHomePage> {
 
       setState(() {
         if (response.winner == 0) {
-          _compareResult = 'Tie!\nP1: ${response.hand1Result.bestHandName} (${response.hand1Result.handRankValue})\nP2: ${response.hand2Result.bestHandName} (${response.hand2Result.handRankValue})';
+          _compareResult = '🤝 Tie!\n\nPlayer 1: ${response.hand1Result.bestHandName}\nRank: ${response.hand1Result.handRankValue}\n\nPlayer 2: ${response.hand2Result.bestHandName}\nRank: ${response.hand2Result.handRankValue}';
         } else if (response.winner == 1) {
-          _compareResult = 'Player 1 Wins!\nP1: ${response.hand1Result.bestHandName} (${response.hand1Result.handRankValue})\nP2: ${response.hand2Result.bestHandName} (${response.hand2Result.handRankValue})';
+          _compareResult = '🏆 Player 1 Wins!\n\nPlayer 1: ${response.hand1Result.bestHandName}\nRank: ${response.hand1Result.handRankValue}\n\nPlayer 2: ${response.hand2Result.bestHandName}\nRank: ${response.hand2Result.handRankValue}';
         } else {
-          _compareResult = 'Player 2 Wins!\nP1: ${response.hand1Result.bestHandName} (${response.hand1Result.handRankValue})\nP2: ${response.hand2Result.bestHandName} (${response.hand2Result.handRankValue})';
+          _compareResult = '🏆 Player 2 Wins!\n\nPlayer 1: ${response.hand1Result.bestHandName}\nRank: ${response.hand1Result.handRankValue}\n\nPlayer 2: ${response.hand2Result.bestHandName}\nRank: ${response.hand2Result.handRankValue}';
         }
       });
     } catch (e) {
       setState(() {
-        _compareResult = 'Error: ${e.toString()}';
+        _compareResult = '❌ Error: ${e.toString()}';
       });
     }
   }
 
   void _calculateProbability() async {
     try {
+      final holeCards = [
+        _probHole1Controller.text.trim().toUpperCase(),
+        _probHole2Controller.text.trim().toUpperCase(),
+      ];
+      
+      final communityCards = _probCommunityControllers
+          .map((c) => c.text.trim().toUpperCase())
+          .where((c) => c.isNotEmpty)
+          .toList();
+      
+      // Validate hole cards
+      final holeError = _validateCards(holeCards, minCards: 2, maxCards: 2, fieldName: 'Hole cards');
+      if (holeError != null) {
+        setState(() {
+          _probResult = '❌ $holeError';
+        });
+        return;
+      }
+      
+      // Validate community cards
+      final communityError = _validateCards(communityCards, minCards: 0, maxCards: 5, fieldName: 'Community cards');
+      if (communityError != null) {
+        setState(() {
+          _probResult = '❌ $communityError';
+        });
+        return;
+      }
+      
+      // Check for duplicates across all cards
+      final allCards = [...holeCards, ...communityCards];
+      final duplicateError = _validateCards(allCards, fieldName: 'All cards');
+      if (duplicateError != null && duplicateError.contains('Duplicate')) {
+        setState(() {
+          _probResult = '❌ $duplicateError';
+        });
+        return;
+      }
+      
+      // Validate number of simulations
+      final numSims = int.tryParse(_probSimsController.text);
+      if (numSims == null || numSims < 100 || numSims > 100000) {
+        setState(() {
+          _probResult = '❌ Number of simulations must be between 100 and 100,000';
+        });
+        return;
+      }
+      
       final request = SimRequest()
-        ..holeCards.addAll([_probHole1Controller.text, _probHole2Controller.text])
-        ..communityCards.addAll(_probCommunityController.text.split(' ').where((c) => c.isNotEmpty))
-        ..numSimulations = int.parse(_probSimsController.text);
+        ..holeCards.addAll(holeCards)
+        ..communityCards.addAll(communityCards)
+        ..numSimulations = numSims;
 
       final response = await _client.calculateProbability(request);
 
       setState(() {
-        _probResult = 'Win: ${(response.winProbability * 100).toStringAsFixed(2)}%\n'
-            'Tie: ${(response.tieProbability * 100).toStringAsFixed(2)}%\n'
-            'Lose: ${(response.loseProbability * 100).toStringAsFixed(2)}%';
+        _probResult = '📊 Probability Results:\n\n'
+            '🏆 Win:  ${(response.winProbability * 100).toStringAsFixed(2)}%\n'
+            '🤝 Tie:  ${(response.tieProbability * 100).toStringAsFixed(2)}%\n'
+            '❌ Lose: ${(response.loseProbability * 100).toStringAsFixed(2)}%\n\n'
+            'Based on $numSims simulations';
       });
     } catch (e) {
       setState(() {
-        _probResult = 'Error: ${e.toString()}';
+        _probResult = '❌ Error: ${e.toString()}';
       });
     }
   }
@@ -287,11 +512,6 @@ class _PokerHomePageState extends State<PokerHomePage> {
                           '• Examples: HA (Ace of Hearts), D10 (10 of Diamonds), SK (King of Spades)',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white60),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '• Separate multiple cards with spaces',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white60),
-                        ),
                       ],
                     ),
                   ),
@@ -304,25 +524,58 @@ class _PokerHomePageState extends State<PokerHomePage> {
                   title: '🎯 Evaluate Hand',
                   icon: Icons.casino,
                   children: [
-                    _buildCardInput(
-                      context,
-                      controller: _evalHole1Controller,
-                      label: 'Hole Card 1',
-                      hint: 'e.g., HA',
+                    Text(
+                      'Your Hole Cards',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: const Color(0xFF00E676),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                    const SizedBox(height: 12),
-                    _buildCardInput(
-                      context,
-                      controller: _evalHole2Controller,
-                      label: 'Hole Card 2',
-                      hint: 'e.g., HK',
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildCardInput(
+                            context,
+                            controller: _evalHole1Controller,
+                            label: 'Card 1',
+                            hint: 'e.g., HA',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildCardInput(
+                            context,
+                            controller: _evalHole2Controller,
+                            label: 'Card 2',
+                            hint: 'e.g., HK',
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    _buildCardInput(
-                      context,
-                      controller: _evalCommunityController,
-                      label: 'Community Cards',
-                      hint: 'e.g., HQ HJ H10 D9 S8',
+                    const SizedBox(height: 16),
+                    Text(
+                      'Community Cards (Optional)',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: const Color(0xFF00E676),
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        for (int i = 0; i < 5; i++) ...[
+                          if (i > 0) const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildCardInput(
+                              context,
+                              controller: _evalCommunityControllers[i],
+                              label: i < 3 ? 'Flop ${i + 1}' : (i == 3 ? 'Turn' : 'River'),
+                              hint: '',
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
@@ -406,12 +659,29 @@ class _PokerHomePageState extends State<PokerHomePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    _buildCardInput(
-                      context,
-                      controller: _compareCommunityController,
-                      label: 'Community Cards',
-                      hint: 'e.g., HQ HJ H10 D9 S8',
+                    const SizedBox(height: 20),
+                    Text(
+                      'Community Cards (Optional)',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: const Color(0xFF00E676),
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        for (int i = 0; i < 5; i++) ...[
+                          if (i > 0) const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildCardInput(
+                              context,
+                              controller: _compareCommunityControllers[i],
+                              label: i < 3 ? 'Flop ${i + 1}' : (i == 3 ? 'Turn' : 'River'),
+                              hint: '',
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
@@ -436,31 +706,64 @@ class _PokerHomePageState extends State<PokerHomePage> {
                   title: '📊 Calculate Win Probability',
                   icon: Icons.analytics,
                   children: [
-                    _buildCardInput(
-                      context,
-                      controller: _probHole1Controller,
-                      label: 'Hole Card 1',
-                      hint: 'e.g., HA',
+                    Text(
+                      'Your Hole Cards',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: const Color(0xFF00E676),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                    const SizedBox(height: 12),
-                    _buildCardInput(
-                      context,
-                      controller: _probHole2Controller,
-                      label: 'Hole Card 2',
-                      hint: 'e.g., HK',
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildCardInput(
+                            context,
+                            controller: _probHole1Controller,
+                            label: 'Card 1',
+                            hint: 'e.g., HA',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildCardInput(
+                            context,
+                            controller: _probHole2Controller,
+                            label: 'Card 2',
+                            hint: 'e.g., HK',
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    _buildCardInput(
-                      context,
-                      controller: _probCommunityController,
-                      label: 'Community Cards (optional)',
-                      hint: 'e.g., HQ HJ H10',
+                    const SizedBox(height: 16),
+                    Text(
+                      'Community Cards (Optional)',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: const Color(0xFF00E676),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        for (int i = 0; i < 5; i++) ...[
+                          if (i > 0) const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildCardInput(
+                              context,
+                              controller: _probCommunityControllers[i],
+                              label: i < 3 ? 'Flop ${i + 1}' : (i == 3 ? 'Turn' : 'River'),
+                              hint: '',
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                     _buildCardInput(
                       context,
                       controller: _probSimsController,
-                      label: 'Number of Simulations',
+                      label: 'Number of Simulations (100-100,000)',
                       hint: '10000',
                       keyboardType: TextInputType.number,
                     ),
@@ -582,6 +885,105 @@ class _PokerHomePageState extends State<PokerHomePage> {
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                 ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Visual Playing Card Widget
+  Widget _buildPlayingCard(String cardStr) {
+    if (cardStr.isEmpty) return const SizedBox.shrink();
+    
+    final suit = cardStr[0].toUpperCase();
+    final rank = cardStr.substring(1).toUpperCase();
+    
+    final suitColor = (suit == 'H' || suit == 'D') ? Colors.red : Colors.black;
+    final suitSymbol = {
+      'H': '♥',
+      'D': '♦',
+      'C': '♣',
+      'S': '♠',
+    }[suit] ?? '';
+
+    return Container(
+      width: 70,
+      height: 98,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Top left corner
+          Positioned(
+            top: 4,
+            left: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  rank,
+                  style: TextStyle(
+                    color: suitColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  suitSymbol,
+                  style: TextStyle(
+                    color: suitColor,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Center
+          Center(
+            child: Text(
+              suitSymbol,
+              style: TextStyle(
+                color: suitColor,
+                fontSize: 36,
+              ),
+            ),
+          ),
+          // Bottom right corner (rotated)
+          Positioned(
+            bottom: 4,
+            right: 4,
+            child: Transform.rotate(
+              angle: 3.14159,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    rank,
+                    style: TextStyle(
+                      color: suitColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    suitSymbol,
+                    style: TextStyle(
+                      color: suitColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
