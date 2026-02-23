@@ -11,4 +11,6 @@ CMD ["grpcwebproxy", \
      "--backend_addr=poker-backend-svc:50051", \
      "--run_tls_server=false", \
      "--allow_all_origins", \
+     "--server_http_max_write_timeout=30s", \
+     "--server_http_max_read_timeout=30s", \
      "--server_http_debug_port=8081"]

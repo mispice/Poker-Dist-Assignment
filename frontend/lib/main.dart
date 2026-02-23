@@ -23,7 +23,7 @@ class PokerApp extends StatelessWidget {
           surface: const Color(0xFF161B22),
           background: const Color(0xFF0D1117),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: const Color(0xFF161B22),
           elevation: 4,
           shape: RoundedRectangleBorder(
@@ -100,7 +100,13 @@ class _PokerHomePageState extends State<PokerHomePage> {
   @override
   void initState() {
     super.initState();
-    _channel = GrpcWebClientChannel.xhr(Uri.parse('http://localhost:8081'));
+    // Use localhost for development, hardcoded proxy IP for production
+    final currentHost = Uri.base.host;
+    final proxyUrl = currentHost == 'localhost' 
+        ? 'http://localhost:8081'
+        : 'http://34.135.251.71:8081';  // Hardcoded proxy LoadBalancer IP
+    
+    _channel = GrpcWebClientChannel.xhr(Uri.parse(proxyUrl));
     _client = PokerServiceClient(_channel);
   }
 

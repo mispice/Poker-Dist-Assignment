@@ -1,0 +1,125 @@
+# Poker Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poker-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: poker-backend
+  template:
+    metadata:
+      labels:
+        app: poker-backend
+    spec:
+      containers:
+      - name: poker-backend
+        image: gcr.io/PROJECT_ID/poker-backend:latest
+        ports:
+        - containerPort: 50051
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"  # Low request so it can schedule
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"  # High limit for burst performance
+---
+# Poker Backend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: poker-backend-svc
+spec:
+  selector:
+    app: poker-backend
+  ports:
+  - protocol: TCP
+    port: 50051
+    targetPort: 50051
+  type: ClusterIP
+---
+# Poker Proxy Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poker-proxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: poker-proxy
+  template:
+    metadata:
+      labels:
+        app: poker-proxy
+    spec:
+      containers:
+      - name: poker-proxy
+        image: gcr.io/PROJECT_ID/poker-proxy:latest
+        ports:
+        - containerPort: 8081
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+# Poker Proxy Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: poker-proxy-svc
+spec:
+  selector:
+    app: poker-proxy
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
+  type: LoadBalancer
+---
+# Poker Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poker-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: poker-frontend
+  template:
+    metadata:
+      labels:
+        app: poker-frontend
+    spec:
+      containers:
+      - name: poker-frontend
+        image: gcr.io/PROJECT_ID/poker-frontend:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+# Poker Frontend Service (LoadBalancer for external access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: poker-frontend-svc
+spec:
+  selector:
+    app: poker-frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer

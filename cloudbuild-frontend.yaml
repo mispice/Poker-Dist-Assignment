@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-f', 'Dockerfile.frontend', '-t', 'gcr.io/project-2bf1703a-7f02-4044-849/poker-frontend:latest', '.']
+images:
+- 'gcr.io/project-2bf1703a-7f02-4044-849/poker-frontend:latest'
